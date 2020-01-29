@@ -66,8 +66,8 @@ if [ "${yn}" == "Y" -o "${yn}" == "y" ]; then
 	installPath=`pkgutil --pkg-info ${software} | grep 'location:' | awk '{print $2}'`
 	cd /${installPath}
 	#start uninstall
-	pkgutil --only-files --files ${software} | tr '\n' '\0' | xargs -n 1 -0 rm -if
-	pkgutil --only-dirs --files ${software} | tr '\n' '\0' | xargs -n 1 -0 rm -ifr
+	pkgutil --only-files --files ${software} | tr '\n' '\0' | xargs -n 1 -0 sudo rm -if
+	pkgutil --only-dirs --files ${software} | tail -r | tr '\n' '\0' | xargs -n 1 -0 sudo rmdir
 	sudo pkgutil --forget ${software}
 	cd
 	echo "remove success, Bye"

@@ -10,10 +10,10 @@ echo "-------------------------------------------------------"
 echo "this script can just REMOVE ONE PKG AT ONE TIME on you mac."
 echo "sometimes you install big software like virtualbox, it will automatically install patch."
 echo "remember to execute this script again!"
-echo 
+echo
 echo "this script will not show apple's pkg, if you want to know more about apple's pkg."
 echo "please insert below command line on terminal."
-echo 
+echo
 echo "pkgutil --pkgs | grep 'com.apple.pkg'"
 echo "-------------------------------------------------------"
 echo "1. I want to give some keyword to search pkg."
@@ -44,7 +44,7 @@ echo "you install this pkg on below time"
 installTime=`pkgutil --pkg-info ${software} | grep 'install-time:' | awk '{print $2}'`
 date -r ${installTime}
 
-#make "a.b.c.d" to "a b c d" 
+#make "a.b.c.d" to "a b c d"
 #generate keyword to clipboard, if search a.b.c.d, google will think it is a web address
 echo "------------------------------------------------------------------------------"
 echo "1. I don't know what this pkg is, please generate the keyword for me to search."
@@ -58,13 +58,18 @@ if [ ${isWebKeyWord} == "1" ]; then
 	echo "(you can use HOTKEY command+V)"
 fi
 
+echo "The following files will be deleted!"
+pkgutil --only-files --files ${software}
+echo "The following directories will be deleted!"
+pkgutil --only-dirs --files ${software}
 echo  "----------------------------------------------------------------------------"
-echo  "sure you had ALREADY KNOW WHAT THIS PKG IS, and turn that application off" 
+echo  "sure you had ALREADY KNOW WHAT THIS PKG IS, and turn that application off"
 read -p "are you sure you want to remove this pks?[y/n]: " yn
 if [ "${yn}" == "Y" -o "${yn}" == "y" ]; then
 	#determine the install path
-	installPath=`pkgutil --pkg-info ${software} | grep 'location:' | awk '{print $2}'`
-	cd /${installPath}
+	installPath=`pkgutil --pkg-info ${software} | grep 'location:' | awk '{$1="";print}' | xargs`
+	cd "/${installPath}"
+	pwd
 	#start uninstall
 	pkgutil --only-files --files ${software} | tr '\n' '\0' | xargs -n 1 -0 sudo rm -if
 	pkgutil --only-dirs --files ${software} | tail -r | tr '\n' '\0' | xargs -n 1 -0 sudo rmdir
